@@ -1,0 +1,25 @@
+{
+    "name": "gemini-rag-server",
+    "version": "1.0.0",
+    "description": "Express REST API for Q&A management with PostgreSQL (pgvector) and Gemini semantic search",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "node --watch index.js"
+    },
+    "dependencies": {
+        "@google/generative-ai": "^0.21.0",
+        "express": "^4.21.0",
+        "pg": "^8.13.0",
+        "pgvector": "^0.2.0",
+        "dotenv": "^16.4.0",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.1",
+        "multer": "^1.4.5-lts.1",
+        "pdf-parse": "^1.1.1"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}
