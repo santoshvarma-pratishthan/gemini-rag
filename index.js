@@ -163,7 +163,6 @@ const allowedOrigins = [
   "http://localhost:3000"
 ];
 
-const cors = require("cors");
 
 app.use(cors({
   origin: "https://lucid-gemini.lovable.app", // your frontend
