@@ -163,24 +163,13 @@ const allowedOrigins = [
   "http://localhost:3000"
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like curl or mobile apps)
-    if (!origin) return callback(null, true);
+const cors = require("cors");
 
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+app.use(cors()); // allow all origins
 
-// ✅ IMPORTANT: Handle preflight
+// handle preflight explicitly
 app.options("*", cors());
+
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
