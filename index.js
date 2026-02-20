@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import pg from "pg";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
@@ -23,7 +24,11 @@ if (!GEMINI_API_KEY) {
 
 // ── Database ───────────────────────────────────────────────────────────────────
 
-const pool = new pg.Pool({ connectionString: DATABASE_URL });
+const isRemoteDB = !DATABASE_URL.includes("localhost") && !DATABASE_URL.includes("127.0.0.1");
+const pool = new pg.Pool({
+    connectionString: DATABASE_URL,
+    ssl: isRemoteDB ? { rejectUnauthorized: false } : false,
+});
 
 async function query(text, params = []) {
     const client = await pool.connect();
@@ -33,6 +38,7 @@ async function query(text, params = []) {
         client.release();
     }
 }
+
 
 // ── Gemini Embeddings (direct API call) ────────────────────────────────────────
 
@@ -150,6 +156,7 @@ const swaggerSpec = swaggerJsdoc({
 // ── Express App ────────────────────────────────────────────────────────────────
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
