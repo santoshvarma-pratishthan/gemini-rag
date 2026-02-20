@@ -165,11 +165,10 @@ const allowedOrigins = [
 
 const cors = require("cors");
 
-app.use(cors()); // allow all origins
-
-// handle preflight explicitly
-app.options("*", cors());
-
+app.use(cors({
+  origin: "https://lucid-gemini.lovable.app", // your frontend
+  credentials: true
+}));
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
