@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   postgres:
     image: pgvector/pgvector:pg16
@@ -14,6 +12,25 @@ services:
     volumes:
       - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d gemini_rag" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server:
+    build: .
+    container_name: gemini-rag-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/gemini_rag
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      PORT: 3000
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   pgdata:
