@@ -156,11 +156,31 @@ const swaggerSpec = swaggerJsdoc({
 // ── Express App ────────────────────────────────────────────────────────────────
 
 const app = express();
+const allowedOrigins = [
+  "https://lucid-gemini.lovable.app",
+  "https://gemini-rag-server.onrender.com",
+  "http://localhost:10000",
+  "http://localhost:3000"
+];
+
 app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+  origin: function (origin, callback) {
+    // allow requests with no origin (like curl or mobile apps)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
+
+// ✅ IMPORTANT: Handle preflight
+app.options("*", cors());
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
